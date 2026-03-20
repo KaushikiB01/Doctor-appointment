@@ -7,6 +7,15 @@
 .env
 # testing
 /coverage
+diff --git a/c:\Users\samru\OneDrive\Documents\doctor_appointment\.gitignore b/c:\Users\samru\OneDrive\Documents\doctor_appointment\.gitignore
+new file mode 100644
+--- /dev/null
++++ b/c:\Users\samru\OneDrive\Documents\doctor_appointment\.gitignore
+@@ -0,0 +1,4 @@
+.env
+*.env
+**/.env
+**/.env.*
 
 # production
 /build
