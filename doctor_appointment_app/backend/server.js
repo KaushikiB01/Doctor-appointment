@@ -263,4 +263,18 @@ app.post("/api/login", async (req, res) => {
     res.status(500).json({ error: "Login failed" });
   }
 });
+app.get("/", (req, res) => {
+  res.json({ 
+    status: "ok", 
+    message: "MediSlot API is running 🏥",
+    version: "1.0.0"
+  });
+});
+app.get("/api", (req, res) => {
+  res.json({ 
+    status: "ok", 
+    message: "MediSlot API is running 🏥",
+    version: "1.0.0"
+  });
+});
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
