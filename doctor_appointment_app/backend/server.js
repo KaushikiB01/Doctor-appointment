@@ -34,7 +34,7 @@ const corsOptions = {
     return callback(new Error(`Origin ${origin} not allowed by CORS`));
   },
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "Accept"],
+  allowedHeaders: ["Content-Type", "Authorization", "Accept", "Cache-Control"],
   credentials: true,
 };
 
@@ -92,6 +92,8 @@ const bookingSchema = new mongoose.Schema({
   },
   patientName: String,
   date: String,
+  time: String,
+  status: { type: String, default: "Scheduled" },
   createdAt: {
     type: Date,
     default: Date.now,
@@ -191,8 +193,8 @@ app.put("/api/doctors/:id", verifyToken, async (req, res) => {
 });
 app.post("/api/appointments", async (req, res) => {
   try {
-    const newAppointment = new Appointment(req.body);
-    await newAppointment.save();
+    const newBooking = new Booking(req.body);
+    await newBooking.save();
     res.json({ message: "Appointment booked successfully" });
   } catch (error) {
     res.status(500).json({ error: "Booking failed" });
@@ -217,10 +219,21 @@ app.get("/api/bookings", async (req, res) => {
     } else if (role === 'doctor' && doctorId) {
       query = { doctorId };
     }
-    const bookings = await Booking.find(query).populate("doctorId");
+    const bookings = await Booking.find(query).populate("doctorId").populate("patientId");
     res.json(bookings);
   } catch (err) {
     res.status(500).json({ error: "Error fetching bookings" });
+  }
+});
+
+app.put("/api/bookings/:id/status", verifyToken, async (req, res) => {
+  try {
+    const { status } = req.body;
+    const booking = await Booking.findByIdAndUpdate(req.params.id, { status }, { new: true });
+    if (!booking) return res.status(404).json({ error: "Booking not found" });
+    res.json(booking);
+  } catch (error) {
+    res.status(500).json({ error: "Error updating status" });
   }
 });
 const ADMIN_EMAIL = "admin@medislot.com";
